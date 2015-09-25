@@ -1,5 +1,14 @@
 *.class
 
+# Mac stuff
+.DS_STORE
+
+
+# Latex
+*.aux
+*.synctex.gz
+*.log
+
 # Mobile Tools for Java (J2ME)
 .mtj.tmp/
 
