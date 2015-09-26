@@ -1,3 +1,7 @@
+/**
+ * Created by englund on 26/09/15.
+ */
+
 import java.io.*;
 import java.net.*;
 import javax.net.ssl.*;
@@ -6,12 +10,16 @@ import java.util.StringTokenizer;
 
 public class SSLServer {
 
-
+    private int port;
     static final int DEFAULT_PORT = 8189;
     static final String KEYSTORE = "jpatkeystore.ks";
     static final String TRUSTSTORE = "jpattruststore.ks";
     static final String STOREPASSWD = "changeit";
     static final String ALIASPASSWD = "changeit";
+
+    SSLServer( int port ) {
+        this.port = port;
+    }
 
     public void run() {
         try {
@@ -24,12 +32,29 @@ public class SSLServer {
             KeyManagerFactory kmf = KeyManagerFactory.getInstance( "SunX509" );
             kmf.init( ks, ALIASPASSWD.toCharArray() );
 
+            TrustManagerFactory tmf = TrustManagerFactory.getInstance( "SunX509" );
+            tmf.init(ts);
+
+            SSLContext sslContext = SSLContext.getInstance( "TLS" );
+            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+            SSLServerSocketFactory sslServerFactory = sslContext.getServerSocketFactory();
+            SSLServerSocket sss = (SSLServerSocket) sslServerFactory.createServerSocket( port );
+            sss.setEnabledCipherSuites( sss.getSupportedCipherSuites() );
+
+            System.out.println("\n>>>> SecureAdditionServer: active ");
+            SSLSocket incoming = (SSLSocket)sss.accept();
+
         } catch(Exception x) {
             System.out.println(x);
             x.printStackTrace();
         }
     }
     public static void main(String[] args) {
-        System.out.println("Hello World!");
+        int port = DEFAULT_PORT;
+        if (args.length > 0 ) {
+            port = Integer.parseInt( args[0] );
+        }
+        SSLServer server = new SSLServer( port );
+        server.run();
     }
 }
