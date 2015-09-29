@@ -12,10 +12,10 @@ public class SSLServer {
 
     private int port;
     static final int DEFAULT_PORT = 8189;
-    static final String KEYSTORE = "jpatkeystore.ks";
-    static final String TRUSTSTORE = "jpattruststore.ks";
-    static final String STOREPASSWD = "changeit";
-    static final String ALIASPASSWD = "changeit";
+    static final String KEYSTORE = "LIUkeystore.ks";
+    static final String TRUSTSTORE = "LIUtruststore.ks";
+    static final String STOREPASSWD = "123456";
+    static final String ALIASPASSWD = "123456";
 
     SSLServer( int port ) {
         this.port = port;

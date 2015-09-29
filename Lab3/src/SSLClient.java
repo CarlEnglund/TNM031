@@ -13,10 +13,10 @@ public class SSLClient {
     private int port;
     // This is not a reserved port number
     static final int DEFAULT_PORT = 8189;
-    static final String KEYSTORE = "jpatkeystore.ks";
-    static final String TRUSTSTORE = "jpattruststore.ks";
-    static final String STOREPASSWD = "changeit";
-    static final String ALIASPASSWD = "changeit";
+    static final String KEYSTORE = "LIUkeystore.ks";
+    static final String TRUSTSTORE = "LIUtruststore.ks";
+    static final String STOREPASSWD = "123456";
+    static final String ALIASPASSWD = "123456";
 
 
     public SSLClient( InetAddress host, int port ) {
@@ -43,18 +43,6 @@ public class SSLClient {
             SSLSocket client =  (SSLSocket)sslFact.createSocket(host, port);
             client.setEnabledCipherSuites( client.getSupportedCipherSuites() );
             System.out.println("\n>>>> SSL/TLS handshake completed");
-
-
-            BufferedReader socketIn;
-            socketIn = new BufferedReader( new InputStreamReader( client.getInputStream() ) );
-            PrintWriter socketOut = new PrintWriter( client.getOutputStream(), true );
-
-            String numbers = "1.2 3.4 5.6";
-            System.out.println( ">>>> Sending the numbers " + numbers+ " to SecureAdditionServer" );
-            socketOut.println( numbers );
-            System.out.println( socketIn.readLine() );
-
-            socketOut.println ( "" );
         }
         catch( Exception x ) {
             System.out.println( x );
