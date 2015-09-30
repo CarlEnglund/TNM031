@@ -50,6 +50,18 @@ public class SSLClient {
         }
     }
 
+    public void download() {
+
+    }
+
+    public void upload() {
+
+    }
+
+    public void delete() {
+
+    }
+
     public static void main( String[] args ) {
         try {
             InetAddress host = InetAddress.getLocalHost();
