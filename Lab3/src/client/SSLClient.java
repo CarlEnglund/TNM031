@@ -44,31 +44,53 @@ public class SSLClient {
             client.setEnabledCipherSuites( client.getSupportedCipherSuites() );
             System.out.println("\n>>>> SSL/TLS handshake completed");
 
-            BufferedReader socketIn;
-            socketIn = new BufferedReader( new InputStreamReader( client.getInputStream() ) );
-            PrintWriter socketOut = new PrintWriter( client.getOutputStream(), true );
+            BufferedReader socketFromServer;
+            socketFromServer = new BufferedReader( new InputStreamReader( client.getInputStream() ) );
+            PrintWriter socketToServer = new PrintWriter( client.getOutputStream(), true );
 
             printMenu();
             String input = new BufferedReader(new InputStreamReader(System.in)).readLine();
             int option = Integer.parseInt(input);
 
-
-            socketOut.println(option);
+            socketToServer.println(option);
 
 
             switch(option) {
                 case 1:
-                    System.out.println("Option 1");
+                    System.out.println("Enter the file name: ");
+                    try
+                    {
+                        String fileName = new BufferedReader(new InputStreamReader(System.in)).readLine();
+                        System.out.println("Downloading the file from the server");
+                        socketToServer.println(fileName);
+                        String fileData = dataFromServer(socketFromServer);
+                        createTextFile(fileName, fileData);
+                    }
+                    catch (Exception e)
+                    {
+                        System.out.println("There was an error when handling your request");
+                    }
                     break;
                 case 2:
-                    System.out.println("Option 2");
+                    System.out.println("Please the name of the file that you want to upload:");
+                    try {
+                        String fileName = new BufferedReader(new InputStreamReader(System.in)).readLine();
+                        String fileData= readFile(fileName);
+                        System.out.println("Uploading file to the server");
+                        socketToServer.println(fileName);
+                        socketToServer.println(fileData);
+                    }
+                    catch (Exception e) {
+                        System.out.println("There was an error when handling your request");
+                        e.printStackTrace();
+                    }
                     break;
                 case 3:
                     System.out.println("Please enter the name of the file you want to delete.");
                     try {
                         String fileName = new BufferedReader(new InputStreamReader(System.in)).readLine();
                         System.out.println("Deleting file from the server");
-                        socketOut.println(fileName);
+                        socketToServer.println(fileName);
                     }
                     catch (Exception e){
                         System.out.println("There was an error when handling your request");
@@ -93,12 +115,67 @@ public class SSLClient {
 
     }
 
-    public void upload() {
+    private String dataFromServer(BufferedReader socketFromServer)
+    {
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = socketFromServer.readLine();
+            String data="";
+            while (line!= null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = socketFromServer.readLine();
+            }
+            data = sb.toString();
+            return data;
+        }
+        catch (Exception e)
+        {
+            System.out.println ("Error reading from server: " + e.toString());
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private void createFile(String fileName, String data)
+    {
+        String name = fileName;
+        System.out.println(name);
+        PrintWriter writer;
+        try {
+            writer = new PrintWriter(name);
+            writer.print(data);
+            writer.close();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Error writing to file: " + e.toString());
+            e.printStackTrace();
+        }
 
     }
 
-    public void delete() {
+    private String readFile(String fileName)
+    {
+        try {
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
 
+            while(line!=null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+
+            return sb.toString();
+        }
+        catch (Exception e)
+        {
+            System.out.println("There was an error handling your request." + e.toString());
+            e.printStackTrace();
+            return null;
+        }
     }
 
     public void printMenu() {

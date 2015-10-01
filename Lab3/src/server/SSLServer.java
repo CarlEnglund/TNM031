@@ -46,17 +46,25 @@ public class SSLServer {
 
             BufferedReader in = new BufferedReader( new InputStreamReader( incoming.getInputStream() ) );
             PrintWriter out = new PrintWriter( incoming.getOutputStream(), true );
-           
+
             String fileName;
             String fileData;
             int option = Integer.parseInt(in.readLine());
 
             switch(option) {
                 case 1:
-                    System.out.println("Download file");
+                    System.out.println("User requested to download a file");
+
+                    fileName = in.readLine();
+                    fileData = readFile(fileName);
+                    out.println(fileData);
                     break;
                 case 2:
-                    System.out.println("Create file");
+                    System.out.println("User requested to upload a file");
+                    fileName = in.readLine();
+                    fileData = readStringFromClient(in);
+
+                    download(fileName, fileData);
                     break;
                 case 3:
                     System.out.println("User requested to delete a file");
@@ -76,14 +84,50 @@ public class SSLServer {
         }
     }
 
-    public void download() {
+    public void download(String fileName, String fileData) {
+        String serverFileName = "server"+fileName;
+        System.out.println(serverFileName);
+        PrintWriter writer;
+
+        try
+        {
+            writer = new PrintWriter(serverFileName, "UTF-8");
+            writer.print(fileData);
+            writer.close();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Error writing to file");
+            e.printStackTrace();
+        }
 
     }
 
-    public void upload() {
+    private String readFile(String fileName)
+    {
+        try
+        {
 
+            BufferedReader br = new BufferedReader(new FileReader(fileName));
+            StringBuilder sb = new StringBuilder();
+            String line = br.readLine();
+
+            while(line!=null)
+            {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = br.readLine();
+            }
+            // return full text
+            return sb.toString();
+        }
+        catch (Exception e)
+        {
+            System.out.println("Couldn't read file " + fileName + " Exception: " + e.toString());
+            e.printStackTrace();
+            return "";
+        }
     }
-
     public void delete(String name) {
         try {
             File mFile = new File(name);
@@ -93,6 +137,25 @@ public class SSLServer {
         catch (Exception e){
             System.out.println("Error when trying to delete file");
             e.printStackTrace();
+        }
+    }
+
+    private String readStringFromClient(BufferedReader socketIn) {
+        try {
+            StringBuilder sb = new StringBuilder();
+            String line = socketIn.readLine();
+            String fullText = "";
+            while (line != null) {
+                sb.append(line);
+                sb.append(System.lineSeparator());
+                line = socketIn.readLine();
+            }
+            fullText = sb.toString();
+            return fullText;
+        } catch (Exception e) {
+            System.out.println("Error reading string from server");
+            e.printStackTrace();
+            return "";
         }
     }
 
