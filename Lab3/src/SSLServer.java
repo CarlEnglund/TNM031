@@ -44,6 +44,32 @@ public class SSLServer {
             System.out.println("\n>>>> SecureAdditionServer: active ");
             SSLSocket incoming = (SSLSocket)sss.accept();
 
+            BufferedReader in = new BufferedReader( new InputStreamReader( incoming.getInputStream() ) );
+            PrintWriter out = new PrintWriter( incoming.getOutputStream(), true );
+           
+            String fileName;
+            String fileData;
+            int option = Integer.parseInt(in.readLine());
+
+            switch(option) {
+                case 1:
+                    System.out.println("Download file");
+                    break;
+                case 2:
+                    System.out.println("Create file");
+                    break;
+                case 3:
+                    System.out.println("User requested to delete a file");
+                    fileName = in.readLine();
+                    delete(fileName);
+                    break;
+                default:
+                    System.out.println("Unexpected behaviour");
+                    break;
+            }
+
+            incoming.close();
+
         } catch(Exception x) {
             System.out.println(x);
             x.printStackTrace();
@@ -58,9 +84,18 @@ public class SSLServer {
 
     }
 
-    public void delete() {
-
+    public void delete(String name) {
+        try {
+            File mFile = new File(name);
+            mFile.delete();
+            System.out.println("File deleted");
+        }
+        catch (Exception e){
+            System.out.println("Error when trying to delete file");
+            e.printStackTrace();
+        }
     }
+
     public static void main(String[] args) {
         int port = DEFAULT_PORT;
         if (args.length > 0 ) {
