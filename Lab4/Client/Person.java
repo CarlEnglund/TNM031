@@ -1,3 +1,5 @@
+package Lab4.Client;
+
 public class Person {
 
     String mName; 
