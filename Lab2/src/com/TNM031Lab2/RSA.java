@@ -5,7 +5,6 @@ import java.security.SecureRandom;
 
 public class RSA {
 
-
     //Function for generating a large prime number for a BigInteger
     private BigInteger largePrime() {
         SecureRandom random = new SecureRandom();
@@ -38,7 +37,7 @@ public class RSA {
     public static void main(String[] args) {
         RSA Enctryption = new RSA();
 
-	    System.out.println(Enctryption.message);
+	System.out.println(Enctryption.message);
         System.out.println(Enctryption.c);
         System.out.println(Enctryption.n);
         System.out.println(Enctryption.decryptedMessage);
